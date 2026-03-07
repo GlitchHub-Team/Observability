@@ -1,0 +1,40 @@
+{
+  "name": "Observability Dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "remoteUser": "vscode",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "forwardPorts": [
+    3000,
+    9090,
+    7777
+  ],
+  "portsAttributes": {
+    "3000": {
+      "label": "Grafana"
+    },
+    "9090": {
+      "label": "Prometheus"
+    },
+    "7777": {
+      "label": "NATS Exporter"
+    }
+  },
+  "postCreateCommand": "bash -lc 'jq --version && yq --version'",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true
+      },
+      "extensions": [
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-docker",
+        "tamasfe.even-better-toml",
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens"
+      ]
+    }
+  }
+}
