@@ -23,6 +23,8 @@ jobs:
       POSTGRES_DB: ${{ vars.POSTGRES_DB }}
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      NATS_STREAM_SETUPPER_CREDS: ${{ secrets.NATS_STREAM_SETUPPER_CREDS }}
+      NATS_SERVER_TLS_KEY: ${{ secrets.NATS_SERVER_TLS_KEY }}
 
     steps:
       - name: Checkout
@@ -44,6 +46,8 @@ jobs:
             POSTGRES_DB
             POSTGRES_USER
             POSTGRES_PASSWORD
+            NATS_STREAM_SETUPPER_CREDS
+            NATS_SERVER_TLS_KEY
           )
 
           for var in "${required_vars[@]}"; do
@@ -53,29 +57,11 @@ jobs:
             fi
           done
 
-      - name: Create Infrastructure env file
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          cat > Infrastructure/.env <<EOF
-          NATS_HOST=${NATS_HOST}
-          NATS_PORT=${NATS_PORT}
-          NATS_HTTP_PORT=${NATS_HTTP_PORT}
-          NATS_ENCRYPTION_KEY=${NATS_ENCRYPTION_KEY}
-          NATS_SYS_ACCOUNT_ID=${NATS_SYS_ACCOUNT_ID}
-          NATS_APPLICATION_CORE_ID=${NATS_APPLICATION_CORE_ID}
-          POSTGRES_PORT=${POSTGRES_PORT}
-          POSTGRES_DB=${POSTGRES_DB}
-          POSTGRES_USER=${POSTGRES_USER}
-          POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-          EOF
-
-      - name: Start containers
-        shell: bash
-        run: |
-          set -euo pipefail
-          docker compose --env-file ./Infrastructure/.env up -d
+      - name: Start Infrastructure
+        uses: GlitchHub-Team/Infrastructure/.github/actions/start@main
+        with:
+          NATS_STREAM_SETUPPER_CREDS: ${{ secrets.NATS_STREAM_SETUPPER_CREDS }}
+          NATS_SERVER_TLS_KEY: ${{ secrets.NATS_SERVER_TLS_KEY }}
 
       - name: Verify containers startup
         shell: bash
@@ -84,7 +70,7 @@ jobs:
 
           max_attempts=24
           sleep_seconds=5
-          compose_cmd="docker compose --env-file ./Infrastructure/.env"
+          compose_cmd="docker compose -f Infrastructure/docker-compose.yml"
           services="$(${compose_cmd} config --services)"
 
           if [ -z "${services}" ]; then
@@ -139,9 +125,6 @@ jobs:
           ${compose_cmd} logs --no-color --tail=200 || true
           exit 1
 
-      - name: Stop containers
+      - name: Stop
         if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          docker compose --env-file ./Infrastructure/.env down -v --remove-orphans
+        uses: GlitchHub-Team/Infrastructure/.github/actions/stop@main
