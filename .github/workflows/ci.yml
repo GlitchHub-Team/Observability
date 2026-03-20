@@ -83,6 +83,11 @@ jobs:
             echo "Attempt ${attempt}/${max_attempts}"
 
             for svc in ${services}; do
+              if [ "${svc}" = "nats-manager" ]; then
+                echo "Service ${svc}: skipped (one-shot setup container)"
+                continue
+              fi
+
               cid="$(${compose_cmd} ps -q "${svc}")"
               if [ -z "${cid}" ]; then
                 echo "Service ${svc}: container not created yet"
