@@ -1,0 +1,316 @@
+{
+  "uid": "system-metrics-baseline",
+  "title": "System Metrics - Baseline",
+  "tags": ["observability", "baseline", "nats", "mvp"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 2,
+  "refresh": "5s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "Current Scope",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 5, "w": 24, "x": 0, "y": 0 },
+      "options": {
+        "mode": "markdown",
+        "content": "### Baseline Observability\nCurrent data comes from **NATS Exporter**. This dashboard shows transport and broker health metrics already available in the repository baseline.\n\nFuture domain metrics such as **gateway online/offline**, **payload size**, **data staleness** and **Data Consumer write metrics** will appear here after the other services expose `/metrics`."
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Prometheus Target",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 0, "y": 5 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "max(up{job=\"nats\"})",
+          "legendFormat": "nats target"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "max": 1,
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "DOWN" },
+                "1": { "text": "UP" }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Active Connections",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 4, "y": 5 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum({job=\"nats\",__name__=~\"(gnatsd|nats)_varz_connections\"})",
+          "legendFormat": "connections"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "decimals": 0
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Ingress Msg/s",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 8, "y": 5 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate({job=\"nats\",__name__=~\"(gnatsd|nats)_varz_in_msgs\"}[1m]))",
+          "legendFormat": "in_msgs/s"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "decimals": 2
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Egress Msg/s",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 12, "y": 5 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate({job=\"nats\",__name__=~\"(gnatsd|nats)_varz_out_msgs\"}[1m]))",
+          "legendFormat": "out_msgs/s"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "decimals": 2
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "Ingress Bytes/s",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 16, "y": 5 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate({job=\"nats\",__name__=~\"(gnatsd|nats)_varz_in_bytes\"}[1m]))",
+          "legendFormat": "in_bytes/s"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "decimals": 2
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 7,
+      "type": "stat",
+      "title": "Egress Bytes/s",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 5, "w": 4, "x": 20, "y": 5 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate({job=\"nats\",__name__=~\"(gnatsd|nats)_varz_out_bytes\"}[1m]))",
+          "legendFormat": "out_bytes/s"
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "decimals": 2
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Message Throughput",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 10 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate({job=\"nats\",__name__=~\"(gnatsd|nats)_varz_in_msgs\"}[1m]))",
+          "legendFormat": "in_msgs/s"
+        },
+        {
+          "refId": "B",
+          "expr": "sum(rate({job=\"nats\",__name__=~\"(gnatsd|nats)_varz_out_msgs\"}[1m]))",
+          "legendFormat": "out_msgs/s"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "ops" },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "single", "sort": "none" }
+      }
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "Byte Throughput",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 10 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate({job=\"nats\",__name__=~\"(gnatsd|nats)_varz_in_bytes\"}[1m]))",
+          "legendFormat": "in_bytes/s"
+        },
+        {
+          "refId": "B",
+          "expr": "sum(rate({job=\"nats\",__name__=~\"(gnatsd|nats)_varz_out_bytes\"}[1m]))",
+          "legendFormat": "out_bytes/s"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "Bps" },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "single", "sort": "none" }
+      }
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "Connections Trend",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 20 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum({job=\"nats\",__name__=~\"(gnatsd|nats)_varz_connections\"})",
+          "legendFormat": "connections"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "none", "decimals": 0 },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "single", "sort": "none" }
+      }
+    }
+  ]
+}

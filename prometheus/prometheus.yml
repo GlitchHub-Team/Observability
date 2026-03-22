@@ -3,9 +3,44 @@ global:
   evaluation_interval: 10s
 
 scrape_configs:
+  # Current baseline: monitor NATS through nats-exporter.
   - job_name: nats
     metrics_path: /metrics
     scrape_interval: 5s
     static_configs:
       - targets:
           - nats-exporter:7777
+
+  # Future application jobs to enable when the services expose /metrics.
+  # These jobs correspond to the approved metric set for the MVP.
+
+  # Gateway metrics:
+  # - gateway_online_status
+  # - gateway_payload_size_bytes
+  # - gateway_messages_sent_total
+  # - job_name: gateway
+  #   static_configs:
+  #     - targets:
+  #         - gateway:PORT
+
+  # Data Consumer metrics:
+  # - sensor_data_staleness_seconds
+  # - sensor_out_of_range_total
+  # - data_consumer_messages_processed_total
+  # - data_consumer_messages_acked_total
+  # - data_consumer_write_errors_total
+  # - job_name: data-consumer
+  #   static_configs:
+  #     - targets:
+  #         - data-consumer:PORT
+
+  # Dashboard backend metrics:
+  # - http_requests_total
+  # - http_request_duration_seconds
+  # - http_requests_errors_total
+  # - websocket_connections_active
+  # - job_name: dashboard-backend
+  #   static_configs:
+  #     - targets:
+  #         - dashboard-backend:PORT
+
