@@ -37,33 +37,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate required CI secrets/vars
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          required_vars=(
-            NATS_HOST
-            NATS_PORT
-            NATS_HTTP_PORT
-            NATS_ENCRYPTION_KEY
-            NATS_SYS_ACCOUNT_ID
-            NATS_APPLICATION_CORE_ID
-            POSTGRES_PORT
-            POSTGRES_DB
-            POSTGRES_USER
-            POSTGRES_PASSWORD
-            NATS_STREAM_SETUPPER_CREDS
-            NATS_SERVER_TLS_KEY
-          )
-
-          for var in "${required_vars[@]}"; do
-            if [ -z "${!var:-}" ]; then
-              echo "::error::Missing required CI variable/secret: ${var}"
-              exit 1
-            fi
-          done
-
       - name: Start Infrastructure
         uses: GlitchHub-Team/Infrastructure/.github/actions/start@main
         with:
