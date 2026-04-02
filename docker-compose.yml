@@ -1,18 +1,4 @@
 services:
-  nats-exporter:
-    image: natsio/prometheus-nats-exporter:0.19.2
-    env_file:
-    - ./Infrastructure/.env
-    ports:
-    - "7777:7777"
-    command:
-    - "-varz"
-    - "http://${NATS_HOST}:${NATS_HTTP_PORT}"
-    volumes:
-    - ./certs/ca.pem:/etc/nats/certs/ca.pem:ro
-    depends_on:
-    - nats
-
   prometheus:
     image: prom/prometheus:v3.10.0
     ports:
