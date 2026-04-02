@@ -1,43 +1,43 @@
 services:
   nats-exporter:
-    image: natsio/prometheus-nats-exporter:latest
+    image: natsio/prometheus-nats-exporter:0.19.2
     env_file:
-      - ./Infrastructure/.env
+    - ./Infrastructure/.env
     ports:
-      - "7777:7777"
+    - "7777:7777"
     command:
-      - "-varz"
-      - "http://${NATS_HOST}:${NATS_HTTP_PORT}"
+    - "-varz"
+    - "http://${NATS_HOST}:${NATS_HTTP_PORT}"
     volumes:
-      - ./certs/ca.pem:/etc/nats/certs/ca.pem:ro
+    - ./certs/ca.pem:/etc/nats/certs/ca.pem:ro
     depends_on:
-      - nats
+    - nats
 
   prometheus:
-    image: prom/prometheus:latest #sceglierai te la versione
+    image: prom/prometheus:v3.10.0
     ports:
-      - "9090:9090"
+    - "9090:9090"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
+    - "--config.file=/etc/prometheus/prometheus.yml"
     depends_on:
-      - nats
-      - nats-exporter
+    - nats
+    - nats-exporter
 
   grafana:
-    image: grafana/grafana:latest #sceglierai te la versione
+    image: grafana/grafana:12.4.1
     ports:
-      - "3000:3000"
+    - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_USERS_ALLOW_SIGN_UP=false
+    - GF_SECURITY_ADMIN_USER=admin
+    - GF_SECURITY_ADMIN_PASSWORD=admin
+    - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
-      - ./grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     depends_on:
-      - prometheus
+    - prometheus
 
 include:
   - path: ./Infrastructure/docker-compose.yml
