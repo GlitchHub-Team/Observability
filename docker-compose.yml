@@ -1,4 +1,13 @@
 services:
+  nats-exporter:
+    command:
+    - "-varz"
+    - "-connz"
+    - "-accstatz"
+    - "-healthz"
+    - "-jsz=all"
+    - "http://${NATS_HOST:-nats}:${NATS_HTTP_PORT:-8222}"
+
   prometheus:
     image: prom/prometheus:v3.10.0
     ports:
@@ -26,4 +35,4 @@ services:
     - prometheus
 
 include:
-  - path: ./Infrastructure/docker-compose.yml
+  - path: ../Infrastructure/docker-compose.yml
